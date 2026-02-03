@@ -4,13 +4,8 @@ on:
   # Trigger on push/PR to main, BUT only if files in changed
   push:
     branches: ["main"]
-    paths:
-      - "./**"
-      - ".github/workflows/tasks-service.yml"
   pull_request:
     branches: ["main"]
-    paths:
-      - "./**"
 
 jobs:
   # --- JOB 1: UNIT TESTS ---
