@@ -1,0 +1,46 @@
+name: Tasks Service CI
+
+on:
+  # Trigger on push/PR to main, BUT only if files in changed
+  push:
+    branches: ["main"]
+    paths:
+      - "./**"
+      - ".github/workflows/tasks-service.yml"
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "./**"
+
+jobs:
+  # --- JOB 1: UNIT TESTS ---
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          cache: "pip" # Caches dependencies for faster runs
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest
+
+  # --- JOB 2: DOCKER BUILD CHECK ---
+  build-image:
+    needs: test # Only build if tests pass
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: docker build . -t tasks-service:test
